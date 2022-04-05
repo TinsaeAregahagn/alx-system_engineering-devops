@@ -1,2 +1,2 @@
 #!/bin/bash
-fail –1  < iacta >> iacta
+tail -q < iacta >> iacta
