@@ -1,21 +1,42 @@
 #!/usr/bin/python3
 """
-export to json
+Using a REST API, for a given employee ID and returns information
+about his/her TODO list progress.
 """
-
+import csv
 import json
 import requests
-from sys import argv
+import sys
 
-if __name__ == '__main__':
-    endpoint = "https://jsonplaceholder.typicode.com/"
-    userId = argv[1]
-    user = requests.get(endpoint + "users/{}".
-                        format(userId), verify=False).json()
-    todo = requests.get(endpoint + "todos?userId={}".
-                        format(userId), verify=False).json()
-    with open("{}.json".format(userId), "w") as json_file:
-        json.dump({userId: [{
-            "task": task.get("title"),
-            "completed": task.get("completed"),
-            "username": user.get("username")} for task in todo]}, json_file)
+
+if __name__ == "__main__":
+
+    id_user = int(sys.argv[1])
+
+    req_todos = requests.get(
+        'https://jsonplaceholder.typicode.com/todos').json()
+    req_user = requests.get(
+        'https://jsonplaceholder.typicode.com/users').json()
+
+    j_file = sys.argv[1] + '.json'
+
+    with open(j_file, mode='w') as json_file:
+
+        jsonfile = {}
+
+        for i in req_user:
+            if id_user == i.get('id'):
+                USERNAME = i.get('username')
+
+        lists = []
+
+        for j in req_todos:
+            TASK_COMPLETED_STATUS = j.get('completed')
+            TASK_TITLE = j.get('title')
+            if id_user == j.get('userId'):
+                lists.append({'task': TASK_TITLE,
+                              'completed': TASK_COMPLETED_STATUS,
+                              'username': USERNAME})
+                jsonfile = {id_user: lists}
+
+        json.dump(jsonfile, json_file)

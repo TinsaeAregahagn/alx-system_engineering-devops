@@ -1,3 +1,1 @@
-# System engineering DevOps
-
-This project automate some commands from the linux terminal
+# holberton-system_engineering-devops

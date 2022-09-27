@@ -1,31 +1,37 @@
 #!/usr/bin/python3
 """
-extend your Python script to export data in the JSON format
+Using a REST API, for a given employee ID and returns information
+about his/her TODO list progress.
 """
-
+import csv
 import json
 import requests
+import sys
 
-if __name__ == '__main__':
-    users = requests.get("http://jsonplaceholder.typicode.com/users",
-                         verify=False).json()
-    userdict = {}
-    usernamedict = {}
-    for user in users:
-        uid = user.get("id")
-        userdict[uid] = []
-        usernamedict[uid] = user.get("username")
-    todo = requests.get("http://jsonplaceholder.typicode.com/todos",
-                        verify=False).json()
 
-    for task in todo:
-        taskdict = {
-            "task": task.get('title'),
-            "completed": task.get('completed'),
-            "username": usernamedict.get(uid)
-        }
-        uid = task.get("userId")
+if __name__ == "__main__":
 
-        userdict.get(uid).append(taskdict)
-    with open("todo_all_employees.json", 'w') as jsonfile:
-        json.dump(userdict, jsonfile)
+    req_todos = requests.get(
+        'https://jsonplaceholder.typicode.com/todos').json()
+    req_user = requests.get(
+        'https://jsonplaceholder.typicode.com/users').json()
+
+    with open('todo_all_employees.json', mode='w') as json_file:
+
+        jsonfile = {}
+
+        for i in req_user:
+            USER_ID = i.get('id')
+            jsonfile[USER_ID] = []
+
+            for j in req_todos:
+                if USER_ID == j.get('userId'):
+                    USERNAME = i.get('username')
+                    TASK_COMPLETED_S = j.get('completed')
+                    TASK_TITLE = j.get('title')
+
+                    jsonfile[USER_ID].append({'task': TASK_TITLE,
+                                              'completed': TASK_COMPLETED_S,
+                                              'username': USERNAME})
+
+        json.dump(jsonfile, json_file)
