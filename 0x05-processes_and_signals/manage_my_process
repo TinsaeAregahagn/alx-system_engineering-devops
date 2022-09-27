@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# Writes a string to a file indefinitely
-while [[ 1 -eq 1 ]]; do
-  echo "I am alive!" >> /tmp/my_process
+# well well well
+
+file="/tmp/my_process"
+
+while true; do
+  echo "I am alive!" >> "$file"
   sleep 2
 done

@@ -1,12 +1,23 @@
 #!/usr/bin/env bash
-# Prints a string indefinitely and catches some signals
-clean_up_action='rm /var/run/myscript.pid; exit $?'
+# Process and PID file
 
-echo $$ > "/var/run/myscript.pid"
-trap 'echo "I hate the kill command"; '"$clean_up_action" SIGTERM
-trap 'echo "Y U no love me?!"' SIGINT
-trap ''"$clean_up_action" SIGQUIT
+file="/var/run/myscript.pid"
+
+if [ ! -e "$file" ]; then
+  touch "$file"
+fi
+
+sleep 2 &
+
+echo "$!" > "$file"
+
+# prints I hate the kill command, deletes the file and exits  when receiving a SIGTERM or SIGQUIT signal
+trap 'echo "I hate the kill command"; rm "$file"; exit' SIGTERM SIGQUIT
+
+# prints Y U no love me?! when receiving a SIGINT signal
+trap "echo Y U no love me?!" SIGINT
 
 while true; do
   echo "To infinity and beyond"
+  sleep 2
 done

@@ -1,6 +1,24 @@
-# Install Nginx web server (w/ Puppet)
+# Setup New Ubuntu server with nginx
 
-exec { 'Install':
-  command  =>'apt-get -y update && apt-get -y install nginx && echo "Holberton School" > /var/www/html/index.nginx-debian.html && command="server_name _;\n\trewrite ^\/redirect_me https:\/\/www.youtube.com\/watch?v=QH2-TGUlwu4 permanent;" && sed -i "s/server_name _;/$command/" /etc/nginx/sites-available/default && service nginx start',
-  provider => 'shell',
+exec { 'update system':
+        command => '/usr/bin/apt-get update',
+}
+
+package { 'nginx':
+	ensure => 'installed',
+	require => Exec['update system']
+}
+
+file {'/var/www/html/index.html':
+	content => 'Hello World!'
+}
+
+exec {'redirect_me':
+	command => 'sed -i "24i\	rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;" /etc/nginx/sites-available/default',
+	provider => 'shell'
+}
+
+service {'nginx':
+	ensure => running,
+	require => Package['nginx']
 }
