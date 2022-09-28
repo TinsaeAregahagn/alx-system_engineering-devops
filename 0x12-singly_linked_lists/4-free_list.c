@@ -2,20 +2,21 @@
 
 /**
  * free_list - frees a list_t list
- * @head: head of linked list
+ * @head: pointer to the head node of list_t
  */
+
 void free_list(list_t *head)
 {
-	list_t *current;
-	list_t *nxt;
+	list_t *place_holder;
 
-	current = head;
-
-	while (current != NULL)
+	while (head)
 	{
-		nxt = current->next;
-		free(current->str);
-		free(current);
-		current = nxt;
+		if (head->str)
+			free(head->str);
+
+		place_holder = head;
+		head = head->next;
+
+		free(place_holder);
 	}
 }

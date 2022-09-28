@@ -1,30 +1,24 @@
-#include "holberton.h"
-
+#include "main.h"
 /**
- * print_diagonal - check for a digit
- * @n : number of \\ to be printed
- * Return:void
+ * print_diagonal - print character "\" n times
+ * @n: number of characters to draw
  */
 
 void print_diagonal(int n)
 {
+	int draw;
+	int space;
 
-	int i = 0, ii;
-
-	while (i < n && n > 0)
+	if (n > 0)
 	{
-		ii = 0;
-		while (ii < i)
+		for (draw = 1; draw <= n; draw++)
 		{
-			_putchar(' ');
-			ii++;
+			for (space = 1; space < draw; space++)
+				_putchar(' ');
+			_putchar('\\');
+			_putchar('\n');
 		}
-
-		_putchar('\\');
-		_putchar('\n');
-		i++;
 	}
-	if (i == 0)
+	else
 		_putchar('\n');
-
 }
