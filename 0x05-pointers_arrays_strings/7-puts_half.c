@@ -1,9 +1,9 @@
 #include "holberton.h"
 
 /**
- * puts_half - prints the second half of the string
- * @str: the string reference
- * Return: 0
+ * puts_half - print second half of a string
+ * @str: char array string type
+ * Description: If odd number of chars, print (length - 1) / 2
  */
 
 void puts_half(char *str)
@@ -12,6 +12,7 @@ void puts_half(char *str)
 
 	for (i = 0; str[i] != '\0'; i++)
 		;
+
 	i++;
 	for (i /= 2; str[i] != '\0'; i++)
 	{

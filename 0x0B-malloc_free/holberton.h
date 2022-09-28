@@ -1,11 +1,8 @@
-#ifndef HOLBERTON_H
+#if !defined(HOLBERTON_H)
 #define HOLBERTON_H
 
-/**
- * File: holberton.h
- * Desc: Header file containing prototypes for all functions
- *       used in the 0x0A-malloc_free directory.
- */
+#include <stdlib.h>
+#include <stdio.h>
 
 char *create_array(unsigned int size, char c);
 char *_strdup(char *str);
@@ -14,5 +11,4 @@ int **alloc_grid(int width, int height);
 void free_grid(int **grid, int height);
 char *argstostr(int ac, char **av);
 char **strtow(char *str);
-
 #endif

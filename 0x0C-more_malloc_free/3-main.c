@@ -32,7 +32,7 @@ void simple_print_buffer(int *buffer, unsigned int size)
 }
 
 /**
- * main - check the code for ALX School students.
+ * main - check the code for Holberton School students.
  *
  * Return: Always 0.
  */
@@ -41,6 +41,7 @@ int main(void)
     int *a;
 
     a = array_range(0, 10);
+    printf("DONE\n");
     simple_print_buffer(a, 11);
     free(a);
     return (0);

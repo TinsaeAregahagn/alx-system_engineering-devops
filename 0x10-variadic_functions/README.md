@@ -1,1 +1,1 @@
-**0x10. C - Variadic functions**
+# Variadic functions: functions that takes underfined number and type of arguments
