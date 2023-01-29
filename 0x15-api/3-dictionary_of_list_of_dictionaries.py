@@ -1,37 +1,33 @@
 #!/usr/bin/python3
-"""
-Using a REST API, for a given employee ID and returns information
-about his/her TODO list progress.
-"""
-import csv
-import json
-import requests
-import sys
+"""fetches information from JSONplaceholder API and exports to JSON"""
 
+from json import dump
+from requests import get
+from sys import argv
 
 if __name__ == "__main__":
+    users_url = "https://jsonplaceholder.typicode.com/users"
+    users_result = get(users_url).json()
 
-    req_todos = requests.get(
-        'https://jsonplaceholder.typicode.com/todos').json()
-    req_user = requests.get(
-        'https://jsonplaceholder.typicode.com/users').json()
+    big_dict = {}
+    for user in users_result:
+        todo_list = []
 
-    with open('todo_all_employees.json', mode='w') as json_file:
+        pep_fix = "https://jsonplaceholder.typicode.com"
+        todos_url = pep_fix + "/user/{}/todos".format(user.get("id"))
+        name_url = "https://jsonplaceholder.typicode.com/users/{}".format(
+            user.get("id"))
 
-        jsonfile = {}
+        todo_result = get(todos_url).json()
+        name_result = get(name_url).json()
+        for todo in todo_result:
+            todo_dict = {}
+            todo_dict.update({"username": name_result.get("username"),
+                              "task": todo.get("title"),
+                              "completed": todo.get("completed")})
+            todo_list.append(todo_dict)
 
-        for i in req_user:
-            USER_ID = i.get('id')
-            jsonfile[USER_ID] = []
+        big_dict.update({user.get("id"): todo_list})
 
-            for j in req_todos:
-                if USER_ID == j.get('userId'):
-                    USERNAME = i.get('username')
-                    TASK_COMPLETED_S = j.get('completed')
-                    TASK_TITLE = j.get('title')
-
-                    jsonfile[USER_ID].append({'task': TASK_TITLE,
-                                              'completed': TASK_COMPLETED_S,
-                                              'username': USERNAME})
-
-        json.dump(jsonfile, json_file)
+    with open("todo_all_employees.json", 'w') as f:
+        dump(big_dict, f)

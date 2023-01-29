@@ -1,42 +1,24 @@
 #!/usr/bin/python3
-"""
-Using a REST API, for a given employee ID and returns information
-about his/her TODO list progress.
-"""
-import csv
-import json
-import requests
-import sys
+"""fetches information from JSONplaceholder API and exports to JSON"""
+
+from json import dump
+from requests import get
+from sys import argv
 
 
 if __name__ == "__main__":
+    todo_url = "https://jsonplaceholder.typicode.com/user/{}/todos".format(
+        argv[1])
+    name_url = "https://jsonplaceholder.typicode.com/users/{}".format(argv[1])
+    todo_result = get(todo_url).json()
+    name_result = get(name_url).json()
 
-    id_user = int(sys.argv[1])
+    todo_list = []
+    for todo in todo_result:
+        todo_dict = {}
+        todo_dict.update({"task": todo.get("title"), "completed": todo.get(
+            "completed"), "username": name_result.get("username")})
+        todo_list.append(todo_dict)
 
-    req_todos = requests.get(
-        'https://jsonplaceholder.typicode.com/todos').json()
-    req_user = requests.get(
-        'https://jsonplaceholder.typicode.com/users').json()
-
-    j_file = sys.argv[1] + '.json'
-
-    with open(j_file, mode='w') as json_file:
-
-        jsonfile = {}
-
-        for i in req_user:
-            if id_user == i.get('id'):
-                USERNAME = i.get('username')
-
-        lists = []
-
-        for j in req_todos:
-            TASK_COMPLETED_STATUS = j.get('completed')
-            TASK_TITLE = j.get('title')
-            if id_user == j.get('userId'):
-                lists.append({'task': TASK_TITLE,
-                              'completed': TASK_COMPLETED_STATUS,
-                              'username': USERNAME})
-                jsonfile = {id_user: lists}
-
-        json.dump(jsonfile, json_file)
+    with open("{}.json".format(argv[1]), 'w') as f:
+        dump({argv[1]: todo_list}, f)

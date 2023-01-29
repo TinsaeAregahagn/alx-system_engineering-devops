@@ -1,37 +1,26 @@
 #!/usr/bin/python3
-"""
-Using a REST API, for a given employee ID and returns information
-about his/her TODO list progress.
-"""
-import csv
-import requests
-import sys
+"""fetches information from JSONplaceholder API and exports to CSV"""
+
+from csv import DictWriter, QUOTE_ALL
+from requests import get
+from sys import argv
 
 
 if __name__ == "__main__":
+    main_url = "https://jsonplaceholder.typicode.com"
+    todo_url = main_url + "/user/{}/todos".format(argv[1])
+    name_url = main_url + "/users/{}".format(argv[1])
+    todo_result = get(todo_url).json()
+    name_result = get(name_url).json()
 
-    id_user = int(sys.argv[1])
-
-    req_todos = requests.get(
-        'https://jsonplaceholder.typicode.com/todos').json()
-    req_user = requests.get(
-        'https://jsonplaceholder.typicode.com/users').json()
-
-    csv_file = sys.argv[1] + '.csv'
-
-    with open(csv_file, mode='w') as export_csv_file:
-        file_to_export = csv.writer(
-            export_csv_file, delimiter=',',
-            quotechar='"', quoting=csv.QUOTE_ALL)
-
-        for i in req_user:
-            if id_user == i.get('id'):
-                USERNAME = i.get('username')
-
-        for j in req_todos:
-            USER_ID = j.get('userId')
-            TASK_COMPLETED_STATUS = j.get('completed')
-            TASK_TITLE = j.get('title')
-            if id_user == j.get('userId'):
-                file_to_export.writerow([
-                     USER_ID, USERNAME, TASK_COMPLETED_STATUS, TASK_TITLE])
+    todo_list = []
+    for todo in todo_result:
+        todo_dict = {}
+        todo_dict.update({"user_ID": argv[1], "username": name_result.get(
+            "username"), "completed": todo.get("completed"),
+                          "task": todo.get("title")})
+        todo_list.append(todo_dict)
+    with open("{}.csv".format(argv[1]), 'w', newline='') as f:
+        header = ["user_ID", "username", "completed", "task"]
+        writer = DictWriter(f, fieldnames=header, quoting=QUOTE_ALL)
+        writer.writerows(todo_list)
