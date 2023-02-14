@@ -1,35 +1,19 @@
 #!/usr/bin/env bash
-# Displays informtation about subdomains.
+# Prints subdomains info
 
-# uncomment for debugging purposes.
-#set -x
-
-# for the checker to work please remove the colors.
-
-# colors
-blue='\e[1;34m'
-brown='\e[0;33m'
-reset='\033[0m'
-
-# variables & parameters
-subdomains=( "www" "lb-01" "web-01" "web-02" )
-domain="$1"
-sub="$2"
-
-dig_cmd () {
-	# func variables
-	sub="$2"
-	INFO="$(dig "$sub.$domain" | grep -A1 'ANSWER SECTION:' | awk 'NR==2')"
-	IP=$(echo "$INFO" | awk '{print $5}')
-	RECORD=$(echo "$INFO" | awk '{print $4}')
-
-	echo -e "${brown}The subdomain ${blue}$sub${brown} is a ${blue}$RECORD${brown} record and points to ${blue}$IP${reset}"
+subdomain_inf () {
+    RT=$(dig $2.$1 | grep -A1 'ANSWER SECTION' | awk '{print $4}' | tail -n 1)
+    DEST=$(dig $2.$1 | grep -A1 'ANSWER SECTION' | awk '{print $5}' | tail -n 1)
+    echo "The subdomain $2 is a $RT record and points to $DEST"
 }
 
-if [ $# -eq 1 ]; then
-	for subs in "${subdomains[@]}"; do
-		dig_cmd "$domain" "$subs"
-	done
-elif [ $# -eq 2 ]; then
-	dig_cmd "$domain" "$sub"
+if [ $# -eq 1 ]
+then
+    subdomain_inf $1 "www"
+    subdomain_inf $1 "lb-01 18.209.224.96"
+    subdomain_inf $1 "web-01 18.214.87.226"
+    subdomain_inf $1 "web-02 100.25.38.197"
+elif [ $# -gt 1 ]
+then
+    subdomain_inf $1 $2
 fi
